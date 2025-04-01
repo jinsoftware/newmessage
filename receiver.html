@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Received Files</title>
+  <title>Received Files (Firebase)</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
   <style>
     body {
       margin: 0;
@@ -44,66 +46,82 @@
       object-fit: contain;
       max-height: 300px;
     }
+    .download-btn {
+      display: inline-block;
+      margin-top: 0.5rem;
+      padding: 0.4rem 1rem;
+      font-size: 0.9rem;
+      color: white;
+      background: #28a745;
+      border: none;
+      border-radius: 6px;
+      text-decoration: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
   </style>
 </head>
 <body>
-
-  <h2>📁 Received Files</h2>
-
-  <div class="folder" id="imageFolder">
-    <h3>🖼️ Image Folder</h3>
-  </div>
-
-  <div class="folder" id="videoFolder">
-    <h3>🎥 Video Folder</h3>
-  </div>
-
-  <div class="folder" id="audioFolder">
-    <h3>🎧 Audio Folder</h3>
-  </div>
-
-  <div class="folder" id="textFolder">
-    <h3>📝 Text Folder</h3>
-  </div>
+  <h2>📁 Received Files (Live from Firebase)</h2>
+  <div class="folder" id="imageFolder"><h3>🖼️ Image Folder</h3></div>
+  <div class="folder" id="videoFolder"><h3>🎥 Video Folder</h3></div>
+  <div class="folder" id="audioFolder"><h3>🎧 Audio Folder</h3></div>
+  <div class="folder" id="textFolder"><h3>📝 Text Folder</h3></div>
 
   <script>
-    const mediaData = localStorage.getItem("mediaFile");
-    const mediaType = localStorage.getItem("mediaType");
+    const firebaseConfig = {
+      apiKey: "AIzaSyAX6rvCGNqZhkrN1lFzejhDEQ43N0wwqFg",
+      authDomain: "macs-portal.firebaseapp.com",
+      databaseURL: "https://macs-portal-default-rtdb.firebaseio.com",
+      projectId: "macs-portal",
+      storageBucket: "macs-portal.firebasestorage.app",
+      messagingSenderId: "774134396501",
+      appId: "1:774134396501:web:b81bdd60b4c064c58846dc"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-    if (mediaType && mediaData) {
-      if (mediaType.startsWith("image")) {
+    function addDownloadButton(dataUrl, filename, container) {
+      const link = document.createElement("a");
+      link.href = dataUrl;
+      link.download = filename;
+      link.className = "download-btn";
+      link.textContent = "⬇ Download";
+      container.appendChild(link);
+    }
+
+    db.ref("sharedMedia").on("child_added", (snapshot) => {
+      const media = snapshot.val();
+      if (!media || !media.type || !media.content) return;
+
+      const type = media.type;
+      const content = media.content;
+
+      if (type.startsWith("image")) {
         const img = document.createElement("img");
-        img.src = mediaData;
-        document.getElementById("imageFolder").appendChild(img);
-
-      } else if (mediaType.startsWith("video")) {
+        img.src = content;
+        imageFolder.appendChild(img);
+        addDownloadButton(content, "image.jpg", imageFolder);
+      } else if (type.startsWith("video")) {
         const video = document.createElement("video");
         video.controls = true;
-        video.src = mediaData;
-        document.getElementById("videoFolder").appendChild(video);
-
-      } else if (mediaType.startsWith("audio")) {
+        video.src = content;
+        videoFolder.appendChild(video);
+        addDownloadButton(content, "video.mp4", videoFolder);
+      } else if (type.startsWith("audio")) {
         const audio = document.createElement("audio");
         audio.controls = true;
-        audio.src = mediaData;
-        document.getElementById("audioFolder").appendChild(audio);
-
-      } else if (mediaType.startsWith("text")) {
-        fetch(mediaData)
-          .then(res => res.text())
-          .then(text => {
-            const pre = document.createElement("pre");
-            pre.textContent = text;
-            document.getElementById("textFolder").appendChild(pre);
-          })
-          .catch(() => {
-            const pre = document.createElement("pre");
-            pre.textContent = "Error loading text.";
-            document.getElementById("textFolder").appendChild(pre);
-          });
+        audio.src = content;
+        audioFolder.appendChild(audio);
+        addDownloadButton(content, "audio.mp3", audioFolder);
+      } else if (type.startsWith("text")) {
+        const pre = document.createElement("pre");
+        fetch(content).then(res => res.text()).then(txt => {
+          pre.textContent = txt;
+          textFolder.appendChild(pre);
+          addDownloadButton(content, "note.txt", textFolder);
+        });
       }
-    }
+    });
   </script>
-
 </body>
 </html>
