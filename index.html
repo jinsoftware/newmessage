@@ -42,6 +42,11 @@
       display: none;
       margin-top: 1rem;
     }
+    #statusMessage {
+      color: green;
+      font-weight: bold;
+      margin-top: 1rem;
+    }
   </style>
 </head>
 <body>
@@ -50,6 +55,7 @@
     <input type="file" id="mediaInput" accept="video/*,audio/*,text/plain,image/*" />
     <textarea id="textMessage" rows="4" placeholder="Or type a text message..."></textarea>
     <button onclick="sendMedia()">Send</button>
+    <div id="statusMessage"></div>
 
     <button class="macs-go" onclick="showLogin()">MACS GO</button>
 
@@ -65,13 +71,15 @@
       const fileInput = document.getElementById("mediaInput");
       const textMessage = document.getElementById("textMessage").value.trim();
       const file = fileInput.files[0];
+      const statusMessage = document.getElementById("statusMessage");
 
       if (file) {
         const reader = new FileReader();
         reader.onload = function (e) {
           localStorage.setItem("mediaFile", e.target.result);
           localStorage.setItem("mediaType", file.type);
-          window.location.href = "receiver.html";
+          statusMessage.textContent = "Sent Complete!";
+          setTimeout(() => location.reload(), 1500);
         };
         reader.readAsDataURL(file);
       } else if (textMessage !== "") {
@@ -80,7 +88,8 @@
         reader.onload = function (e) {
           localStorage.setItem("mediaFile", e.target.result);
           localStorage.setItem("mediaType", "text/plain");
-          window.location.href = "receiver.html";
+          statusMessage.textContent = "Sent Complete!";
+          setTimeout(() => location.reload(), 1500);
         };
         reader.readAsDataURL(blob);
       } else {
