@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Send Media</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .card {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 300px;
+    }
+    input, button {
+      margin: 1rem 0;
+      width: 100%;
+      padding: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Send Media</h2>
+    <input type="file" id="mediaInput" accept="video/*,audio/*,text/plain" />
+    <button onclick="sendMedia()">Send</button>
+  </div>
+
+  <script>
+    function sendMedia() {
+      const fileInput = document.getElementById("mediaInput");
+      const file = fileInput.files[0];
+      if (!file) return alert("Please select a file");
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        localStorage.setItem("mediaFile", e.target.result);
+        localStorage.setItem("mediaType", file.type);
+        window.location.href = "receiver.html";
+      };
+      reader.readAsDataURL(file);
+    }
+  </script>
+</body>
+</html>
