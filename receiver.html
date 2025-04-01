@@ -22,7 +22,7 @@
       width: 400px;
       text-align: center;
     }
-    video, audio, pre {
+    video, audio, img, pre {
       width: 100%;
       margin-top: 1rem;
       border-radius: 10px;
@@ -41,18 +41,25 @@
     const display = document.getElementById("display");
 
     if (mediaType && mediaData) {
-      display.innerHTML = ''; // Clear loading text
+      display.innerHTML = ''; // Clear loading
 
       if (mediaType.startsWith("video")) {
         const video = document.createElement("video");
         video.controls = true;
         video.src = mediaData;
         display.appendChild(video);
+
       } else if (mediaType.startsWith("audio")) {
         const audio = document.createElement("audio");
         audio.controls = true;
         audio.src = mediaData;
         display.appendChild(audio);
+
+      } else if (mediaType.startsWith("image")) {
+        const img = document.createElement("img");
+        img.src = mediaData;
+        display.appendChild(img);
+
       } else if (mediaType.startsWith("text")) {
         fetch(mediaData)
           .then((res) => res.text())
@@ -62,13 +69,14 @@
             display.appendChild(pre);
           })
           .catch(() => {
-            display.textContent = \"Error loading text file.\";
+            display.textContent = "Error loading text.";
           });
+
       } else {
-        display.textContent = \"Unsupported file type.\";
+        display.textContent = "Unsupported media type.";
       }
     } else {
-      display.textContent = \"No media received. Please go back and send a file first.\";
+      display.textContent = "No media received.";
     }
   </script>
 </body>
