@@ -27,6 +27,15 @@
       width: 100%;
       padding: 0.5rem;
     }
+    .receiver-link {
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+      display: block;
+      margin-top: 1rem;
+      padding: 0.5rem;
+      border-radius: 8px;
+    }
   </style>
 </head>
 <body>
@@ -34,6 +43,9 @@
     <h2>Send Media</h2>
     <input type="file" id="mediaInput" accept="video/*,audio/*,text/plain" />
     <button onclick="sendMedia()">Send</button>
+
+    <!-- Receiver Page Link Button -->
+    <a href="receiver.html" class="receiver-link">Go to Receiver Page</a>
   </div>
 
   <script>
