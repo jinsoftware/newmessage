@@ -20,14 +20,14 @@
       border-radius: 15px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
       text-align: center;
-      width: 300px;
+      width: 320px;
     }
-    input, button {
+    input, button, textarea {
       margin: 1rem 0;
       width: 100%;
       padding: 0.5rem;
     }
-    .receiver-link {
+    .macs-go {
       background: #007bff;
       color: white;
       text-decoration: none;
@@ -35,32 +35,71 @@
       margin-top: 1rem;
       padding: 0.5rem;
       border-radius: 8px;
+      cursor: pointer;
+      border: none;
+    }
+    #loginForm {
+      display: none;
+      margin-top: 1rem;
     }
   </style>
 </head>
 <body>
   <div class="card">
     <h2>Send Media</h2>
-    <input type="file" id="mediaInput" accept="video/*,audio/*,text/plain" />
+    <input type="file" id="mediaInput" accept="video/*,audio/*,text/plain,image/*" />
+    <textarea id="textMessage" rows="4" placeholder="Or type a text message..."></textarea>
     <button onclick="sendMedia()">Send</button>
 
-    <!-- Receiver Page Link Button -->
-    <a href="receiver.html" class="receiver-link">Go to Receiver Page</a>
+    <button class="macs-go" onclick="showLogin()">MACS GO</button>
+
+    <div id="loginForm">
+      <input type="text" id="username" placeholder="Username" />
+      <input type="password" id="password" placeholder="Password" />
+      <button onclick="loginAndGo()">Login</button>
+    </div>
   </div>
 
   <script>
     function sendMedia() {
       const fileInput = document.getElementById("mediaInput");
+      const textMessage = document.getElementById("textMessage").value.trim();
       const file = fileInput.files[0];
-      if (!file) return alert("Please select a file");
 
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        localStorage.setItem("mediaFile", e.target.result);
-        localStorage.setItem("mediaType", file.type);
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          localStorage.setItem("mediaFile", e.target.result);
+          localStorage.setItem("mediaType", file.type);
+          window.location.href = "receiver.html";
+        };
+        reader.readAsDataURL(file);
+      } else if (textMessage !== "") {
+        const blob = new Blob([textMessage], { type: "text/plain" });
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          localStorage.setItem("mediaFile", e.target.result);
+          localStorage.setItem("mediaType", "text/plain");
+          window.location.href = "receiver.html";
+        };
+        reader.readAsDataURL(blob);
+      } else {
+        alert("Please select a file or enter a message.");
+      }
+    }
+
+    function showLogin() {
+      document.getElementById("loginForm").style.display = "block";
+    }
+
+    function loginAndGo() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      if (username === "jin" && password === "synonym117") {
         window.location.href = "receiver.html";
-      };
-      reader.readAsDataURL(file);
+      } else {
+        alert("Incorrect login credentials.");
+      }
     }
   </script>
 </body>
