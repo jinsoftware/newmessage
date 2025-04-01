@@ -1,36 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Received Files</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #e3f2fd;
       margin: 0;
       padding: 2rem;
+      font-family: Arial, sans-serif;
+      background: url('wp3839980-tekken-7-heihachi-wallpapers.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
     }
     h2 {
       text-align: center;
-      color: #0d47a1;
+      font-size: 2rem;
+      color: #ffe600;
+      margin-bottom: 2rem;
     }
     .folder {
-      background: #ffffff;
-      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 12px;
       padding: 1rem;
       margin-bottom: 2rem;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
     }
     .folder h3 {
-      color: #333;
-      border-bottom: 1px solid #ccc;
+      margin-bottom: 1rem;
+      color: #00e5ff;
+      border-bottom: 2px solid #00e5ff;
       padding-bottom: 0.5rem;
     }
     video, audio, img, pre {
       width: 100%;
       margin-top: 1rem;
       border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     }
   </style>
 </head>
@@ -64,4 +70,34 @@
         img.src = mediaData;
         document.getElementById("imageFolder").appendChild(img);
 
-      } else if (mediaType.startsWith("video
+      } else if (mediaType.startsWith("video")) {
+        const video = document.createElement("video");
+        video.controls = true;
+        video.src = mediaData;
+        document.getElementById("videoFolder").appendChild(video);
+
+      } else if (mediaType.startsWith("audio")) {
+        const audio = document.createElement("audio");
+        audio.controls = true;
+        audio.src = mediaData;
+        document.getElementById("audioFolder").appendChild(audio);
+
+      } else if (mediaType.startsWith("text")) {
+        fetch(mediaData)
+          .then(res => res.text())
+          .then(text => {
+            const pre = document.createElement("pre");
+            pre.textContent = text;
+            document.getElementById("textFolder").appendChild(pre);
+          })
+          .catch(() => {
+            const pre = document.createElement("pre");
+            pre.textContent = "Error loading text.";
+            document.getElementById("textFolder").appendChild(pre);
+          });
+      }
+    }
+  </script>
+
+</body>
+</html>
