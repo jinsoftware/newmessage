@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Receive Media</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #e3f2fd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      text-align: center;
+    }
+    video, audio, pre {
+      width: 100%;
+      margin-top: 1rem;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Received Media</h2>
+    <div id="display">Loading...</div>
+  </div>
+
+  <script>
+    const mediaData = localStorage.getItem("mediaFile");
+    const mediaType = localStorage.getItem("mediaType");
+    const display = document.getElementById("display");
+
+    if (mediaType && mediaData) {
+      display.innerHTML = ''; // Clear loading text
+
+      if (mediaType.startsWith("video")) {
+        const video = document.createElement("video");
+        video.controls = true;
+        video.src = mediaData;
+        display.appendChild(video);
+      } else if (mediaType.startsWith("audio")) {
+        const audio = document.createElement("audio");
+        audio.controls = true;
+        audio.src = mediaData;
+        display.appendChild(audio);
+      } else if (mediaType.startsWith("text")) {
+        fetch(mediaData)
+          .then((res) => res.text())
+          .then((text) => {
+            const pre = document.createElement("pre");
+            pre.textContent = text;
+            display.appendChild(pre);
+          })
+          .catch(() => {
+            display.textContent = \"Error loading text file.\";
+          });
+      } else {
+        display.textContent = \"Unsupported file type.\";
+      }
+    } else {
+      display.textContent = \"No media received. Please go back and send a file first.\";
+    }
+  </script>
+</body>
+</html>
